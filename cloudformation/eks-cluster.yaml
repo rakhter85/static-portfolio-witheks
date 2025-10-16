@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ClusterName:
+    Type: String
+    Default: StaticPortfolioCluster
+  Subnet1:
+    Type: AWS::EC2::Subnet::Id
+  Subnet2:
+    Type: AWS::EC2::Subnet::Id
+  SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+  ClusterRoleArn:
+    Type: String
+
+Resources:
+  EKSCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: !Ref ClusterName
+      Version: "1.29"  # Pin to latest stable version
+      RoleArn: !Ref ClusterRoleArn
+      ResourcesVpcConfig:
+        SubnetIds:
+          - !Ref Subnet1
+          - !Ref Subnet2
+        SecurityGroupIds:
+          - !Ref SecurityGroupId
+      Logging:
+        ClusterLogging:
+          EnabledTypes:
+            - Type: api
+            - Type: audit
+            - Type: authenticator
+            - Type: controllerManager
+            - Type: scheduler
+
+Outputs:
+  ClusterName:
+    Value: !Ref EKSCluster

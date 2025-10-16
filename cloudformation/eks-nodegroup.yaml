@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ClusterName:
+    Type: String
+  Subnet1:
+    Type: AWS::EC2::Subnet::Id
+  Subnet2:
+    Type: AWS::EC2::Subnet::Id
+  NodeRoleArn:
+    Type: String
+
+Resources:
+  NodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName: !Ref ClusterName
+      NodeRole: !Ref NodeRoleArn
+      Subnets:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      ScalingConfig:
+        MinSize: 1
+        MaxSize: 3
+        DesiredSize: 2
+      InstanceTypes:
+        - t3.medium
+      Tags:
+        Name: StaticPortfolioNodeGroup
+
+Outputs:
+  NodeGroupName:
+    Value: !Ref NodeGroup
